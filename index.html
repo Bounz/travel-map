@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Самарканд & Бухара</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;height:100dvh;overflow:hidden;background:#0d1117;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
@@ -16,7 +17,9 @@ body{display:flex;flex-direction:column}
 .tab{flex:1;padding:9px 6px;text-align:center;font-size:12px;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;user-select:none;transition:color .2s,border-color .2s}
 .tab.on{color:#ffbe32;border-bottom-color:#ffbe32}
 .tab i{display:block;font-size:18px;font-style:normal;margin-bottom:2px}
-#cv{display:block;flex:1;touch-action:none}
+#wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#map-wrap{position:relative;flex:1;overflow:hidden}
+#map{width:100%;height:100%}
 #lv{flex:1;overflow-y:auto;display:none;background:#0d1117}
 .lsec{padding:14px 16px 4px}
 .ltitle{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px}
@@ -26,9 +29,9 @@ body{display:flex;flex-direction:column}
 .lname{font-size:15px;font-weight:600}
 .ltype{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
 .larr{color:rgba(255,255,255,.2);font-size:20px;margin-left:auto}
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .ov.on{opacity:1;pointer-events:all}
-.sh{position:fixed;bottom:0;left:0;right:0;background:#141b2d;border-radius:22px 22px 0 0;z-index:101;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:88dvh;overflow-y:auto}
+.sh{position:fixed;bottom:0;left:0;right:0;background:#141b2d;border-radius:22px 22px 0 0;z-index:1001;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:88dvh;overflow-y:auto}
 .sh.on{transform:translateY(0)}
 .sh-hdl{width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:12px auto 0}
 .sh-hdr{padding:16px 20px 0}
@@ -42,12 +45,30 @@ body{display:flex;flex-direction:column}
 .chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 12px;font-size:13px;color:rgba(255,255,255,.65)}
 .tip{margin-top:14px;background:rgba(255,190,50,.08);border-left:3px solid #ffbe32;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:rgba(255,255,255,.72);line-height:1.55}
 .tip b{color:#ffbe32}
-#wrap{position:relative;flex:1;display:flex;flex-direction:column;overflow:hidden}
-.mbtns{position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:10}
-.mbtn{width:42px;height:42px;background:rgba(13,27,62,.92);border:1px solid rgba(255,255,255,.15);border-radius:11px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.mbtns{position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:500}
+.mbtn{width:42px;height:42px;background:rgba(13,27,62,.92);border:1px solid rgba(255,255,255,.15);border-radius:11px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5)}
 .mbtn:active{background:rgba(30,45,100,.9)}
-.hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:rgba(255,255,255,.65);font-size:12px;padding:7px 16px;border-radius:20px;pointer-events:none;white-space:nowrap;transition:opacity 1s;z-index:10}
+.hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.72);color:rgba(255,255,255,.65);font-size:12px;padding:7px 16px;border-radius:20px;pointer-events:none;white-space:nowrap;transition:opacity 1s;z-index:500}
 .hint.gone{opacity:0}
+
+/* Markers */
+.pin-icon{background:none!important;border:none!important;overflow:visible}
+.pin-outer{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid rgba(255,255,255,.45);position:relative}
+.pin-tail{width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;margin:0 auto}
+.city-icon{background:none!important;border:none!important;overflow:visible}
+.city-bubble{width:64px;height:64px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px solid;cursor:pointer;transition:transform .15s}
+.city-bubble:active{transform:scale(.93)}
+.city-count{font-size:22px;font-weight:800;line-height:1}
+.city-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;opacity:.8}
+
+/* Leaflet tooltip for place labels */
+.place-lbl{background:rgba(5,10,28,.8)!important;border:1px solid rgba(255,255,255,.12)!important;color:rgba(255,255,255,.85)!important;font-size:11px!important;font-weight:600!important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif!important;box-shadow:none!important;padding:3px 8px!important;border-radius:7px!important;white-space:nowrap!important}
+.place-lbl::before{display:none!important}
+
+/* Leaflet overrides */
+.leaflet-container{background:#0d1a2e!important;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.leaflet-control-attribution{background:rgba(0,0,0,.6)!important;color:rgba(255,255,255,.35)!important;font-size:9px!important;padding:2px 6px!important}
+.leaflet-control-attribution a{color:rgba(255,255,255,.5)!important}
 </style>
 </head>
 <body>
@@ -61,18 +82,21 @@ body{display:flex;flex-direction:column}
   <div class="tab" id="t-bux" onclick="showTab('bux')"><i>🕌</i>Бухара</div>
 </div>
 <div id="wrap">
-  <canvas id="cv"></canvas>
-  <div id="lv"></div>
-  <div class="mbtns" id="mbtns">
-    <div class="mbtn" onclick="flyTo('sam')" title="Самарканд">🏛</div>
-    <div class="mbtn" onclick="flyTo('bux')" title="Бухара">🕌</div>
-    <div class="mbtn" onclick="flyTo('all')" title="Обзор">🌍</div>
+  <div id="map-wrap">
+    <div id="map"></div>
+    <div class="mbtns" id="mbtns">
+      <div class="mbtn" onclick="flyTo('sam')" title="Самарканд">🏛</div>
+      <div class="mbtn" onclick="flyTo('bux')" title="Бухара">🕌</div>
+      <div class="mbtn" onclick="flyTo('all')" title="Обзор">🌍</div>
+    </div>
+    <div class="hint" id="hint">Нажми на пин · Двумя пальцами для зума</div>
   </div>
-  <div class="hint" id="hint">Нажми на кружок города · Зум двумя пальцами</div>
+  <div id="lv"></div>
 </div>
 <div class="ov" id="ov" onclick="closeSheet()"></div>
 <div class="sh" id="sh"><div class="sh-hdl"></div><div id="shc"></div></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 const P=[
   {id:'s1',city:'sam',name:'Площадь Регистан',type:'Архитектурный ансамбль',em:'🏛',lat:39.6547,lng:66.9758,col:'#c0392b',
@@ -134,162 +158,74 @@ const P=[
 ];
 
 const ROUTE=[[39.6547,66.9758],[39.6610,66.9745],[39.6680,66.9752],[39.6573,66.9694],[39.7778,64.4142],[39.7760,64.4155],[39.7740,64.4175],[39.7720,64.4197]];
-const VIEWS={all:{lat:39.716,lng:65.72,scale:115},sam:{lat:39.663,lng:66.945,scale:3000},bux:{lat:39.7745,lng:64.421,scale:6500}};
-const LAT_R=1.300;
+const VIEWS={all:{center:[39.716,65.72],zoom:8},sam:{center:[39.663,66.945],zoom:14},bux:{center:[39.7745,64.421],zoom:15}};
 
-const cv=document.getElementById('cv');
-const ctx=cv.getContext('2d');
-const wrap=document.getElementById('wrap');
-let W,H,dpr=window.devicePixelRatio||1;
-let vs={lat:39.716,lng:65.72,scale:115};
-let tv={...vs};
-let drag=false,lx=0,ly=0,pd0=0,ps0=1,animId=null;
+// Init Leaflet
+const map=L.map('map',{center:[39.716,65.72],zoom:8,zoomControl:false,attributionControl:true,tap:false});
 
-function resize(){
-  const r=wrap.getBoundingClientRect();
-  W=r.width;H=r.height;
-  cv.width=W*dpr;cv.height=H*dpr;
-  cv.style.width=W+'px';cv.style.height=H+'px';
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  render();
-}
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+  subdomains:'abcd',maxZoom:19
+}).addTo(map);
 
-function proj(lat,lng){
-  return[W/2+(lng-vs.lng)*vs.scale, H/2-(lat-vs.lat)*vs.scale*LAT_R];
-}
+// Route
+L.polyline(ROUTE,{color:'#ffbe32',weight:2.5,dashArray:'10,10',opacity:.65}).addTo(map);
 
-function render(){
-  ctx.clearRect(0,0,W,H);
-  // Background
-  const bg=ctx.createLinearGradient(0,0,0,H);
-  bg.addColorStop(0,'#0a1628');bg.addColorStop(1,'#0d1f3c');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  // Grid
-  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
-  const step=vs.scale>=2000?0.005:vs.scale>=500?0.02:0.5;
-  const w2=W/2/vs.scale,h2=H/2/(vs.scale*LAT_R);
-  for(let g=Math.floor((vs.lng-w2-step)/step)*step;g<=vs.lng+w2+step;g+=step){
-    const x=W/2+(g-vs.lng)*vs.scale;
-    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
-  }
-  for(let g=Math.floor((vs.lat-h2-step)/step)*step;g<=vs.lat+h2+step;g+=step){
-    const y=H/2-(g-vs.lat)*vs.scale*LAT_R;
-    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
-  }
-  // Route
-  ctx.save();ctx.strokeStyle='rgba(255,190,50,.65)';ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.lineJoin='round';
-  ctx.beginPath();
-  ROUTE.forEach(([la,ln],i)=>{const[x,y]=proj(la,ln);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
-  ctx.stroke();ctx.restore();
-  const detail=vs.scale>=800;
-  if(!detail){
-    [{label:'Самарканд',lat:39.662,lng:66.945,col:'#e77'},{label:'Бухара',lat:39.7745,lng:64.421,col:'#79e'}].forEach(c=>{
-      const[x,y]=proj(c.lat,c.lng);
-      ctx.save();ctx.shadowColor=c.col;ctx.shadowBlur=22;
-      ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);
-      ctx.fillStyle=c.col+'44';ctx.fill();
-      ctx.strokeStyle=c.col;ctx.lineWidth=2;ctx.stroke();
-      ctx.restore();
-      ctx.fillStyle='#fff';ctx.font='bold 15px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('7',x,y);
-      ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='bold 12px -apple-system,sans-serif';ctx.fillText(c.label,x,y+40);
-    });
-  } else {
-    P.forEach(p=>{
-      const[x,y]=proj(p.lat,p.lng);
-      if(x<-40||x>W+40||y<-40||y>H+40) return;
-      const r=20;
-      ctx.save();ctx.shadowColor=p.col;ctx.shadowBlur=14;
-      ctx.beginPath();ctx.arc(x,y-r,r,0,Math.PI*2);
-      ctx.fillStyle=p.col+'cc';ctx.fill();
-      ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;ctx.stroke();
-      ctx.beginPath();ctx.moveTo(x-7,y-r*.5);ctx.lineTo(x+7,y-r*.5);ctx.lineTo(x,y+5);ctx.closePath();
-      ctx.fillStyle=p.col+'cc';ctx.fill();
-      ctx.restore();
-      ctx.font=r+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.em,x,y-r);
-      if(vs.scale>=2500){
-        ctx.font='bold 11px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
-        const tw=ctx.measureText(p.name).width;
-        ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x-tw/2-4,y+8,tw+8,17);
-        ctx.fillStyle='#fff';ctx.fillText(p.name,x,y+10);
-      }
-    });
-  }
-  // City labels
-  [{label:'САМАРКАНД',lat:39.662,lng:66.945},{label:'БУХАРА',lat:39.7745,lng:64.421}].forEach(c=>{
-    const[x,y]=proj(c.lat,c.lng);
-    if(x<-120||x>W+120) return;
-    ctx.font='bold 10px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
-    ctx.fillStyle='rgba(255,190,50,.45)';ctx.fillText('✈ '+c.label,x,y-(detail?260:56));
+// City overview bubbles layer (zoom < 11)
+const cityLayer=L.layerGroup();
+[{label:'Самарканд',lat:39.663,lng:66.945,col:'#e88',count:7,key:'sam'},
+ {label:'Бухара',lat:39.7745,lng:64.421,col:'#99d',count:7,key:'bux'}
+].forEach(c=>{
+  const icon=L.divIcon({
+    html:`<div class="city-bubble" style="background:${c.col}25;border-color:${c.col};box-shadow:0 0 24px ${c.col}55;color:${c.col}"><span class="city-count">${c.count}</span><span class="city-label">${c.label}</span></div>`,
+    className:'city-icon',
+    iconSize:[64,64],
+    iconAnchor:[32,32]
   });
+  L.marker([c.lat,c.lng],{icon}).on('click',()=>flyTo(c.key)).addTo(cityLayer);
+});
+
+// Individual place markers layer (zoom >= 11)
+const placeLayer=L.layerGroup();
+P.forEach(p=>{
+  const fill=p.col+'cc',shadow=p.col+'66';
+  const icon=L.divIcon({
+    html:`<div class="pin-outer" style="background:${fill};box-shadow:0 0 14px ${shadow}"><span>${p.em}</span></div><div class="pin-tail" style="border-top:8px solid ${fill}"></div>`,
+    className:'pin-icon',
+    iconSize:[40,48],
+    iconAnchor:[20,48],
+    tooltipAnchor:[0,4]
+  });
+  const m=L.marker([p.lat,p.lng],{icon}).addTo(placeLayer);
+  m.bindTooltip(p.name,{permanent:true,direction:'bottom',offset:[0,0],className:'place-lbl'});
+  m.on('click',()=>openSheet(p));
+});
+
+function updateLayers(){
+  const z=map.getZoom();
+  if(z>=11){cityLayer.remove();placeLayer.addTo(map);}
+  else{placeLayer.remove();cityLayer.addTo(map);}
 }
+map.on('zoomend',updateLayers);
+cityLayer.addTo(map); // start at zoom 8
 
 function flyTo(key){
-  const v=VIEWS[key];tv={lat:v.lat,lng:v.lng,scale:v.scale};
-  if(!animId)animId=requestAnimationFrame(anim);
-}
-
-function anim(){
-  let mv=false;
-  ['lat','lng','scale'].forEach(k=>{const d=tv[k]-vs[k];if(Math.abs(d)>.00001){vs[k]+=d*.13;mv=true;}else vs[k]=tv[k];});
-  render();
-  animId=mv?requestAnimationFrame(anim):null;
-}
-
-// Touch
-function dist2(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY)}
-
-cv.addEventListener('touchstart',e=>{
-  e.preventDefault();
-  const t=e.touches;
-  if(t.length===1){drag=true;lx=t[0].clientX;ly=t[0].clientY;}
-  else if(t.length===2){drag=false;pd0=dist2(t);ps0=vs.scale;}
-},{passive:false});
-
-cv.addEventListener('touchmove',e=>{
-  e.preventDefault();
-  const t=e.touches;
-  if(t.length===1&&drag){
-    vs.lng-=(t[0].clientX-lx)/vs.scale;vs.lat+=(t[0].clientY-ly)/(vs.scale*LAT_R);
-    tv={...vs};lx=t[0].clientX;ly=t[0].clientY;render();
-  } else if(t.length===2){
-    const ns=ps0*(dist2(t)/pd0);vs.scale=Math.max(80,Math.min(22000,ns));tv={...vs};render();
-  }
-},{passive:false});
-
-cv.addEventListener('touchend',e=>{
-  if(drag&&e.changedTouches.length===1){
-    const dx=e.changedTouches[0].clientX-lx,dy=e.changedTouches[0].clientY-ly;
-    if(Math.abs(dx)<8&&Math.abs(dy)<8) tap(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
-  }
-  drag=false;
-},{passive:true});
-
-cv.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
-cv.addEventListener('mousemove',e=>{if(!drag)return;vs.lng-=(e.clientX-lx)/vs.scale;vs.lat+=(e.clientY-ly)/(vs.scale*LAT_R);tv={...vs};lx=e.clientX;ly=e.clientY;render();});
-cv.addEventListener('mouseup',e=>{if(Math.abs(e.clientX-lx)<5&&Math.abs(e.clientY-ly)<5)tap(e.clientX,e.clientY);drag=false;});
-cv.addEventListener('wheel',e=>{e.preventDefault();vs.scale=Math.max(80,Math.min(22000,vs.scale*(e.deltaY>0?.85:1.15)));tv={...vs};render();},{passive:false});
-
-function tap(cx,cy){
-  if(vs.scale<800){
-    const sp=proj(39.662,66.945),bp=proj(39.7745,64.421);
-    if(Math.hypot(cx-sp[0],cy-sp[1])<42){flyTo('sam');return;}
-    if(Math.hypot(cx-bp[0],cy-bp[1])<42){flyTo('bux');return;}
-    return;
-  }
-  let best=null,bd=Infinity;
-  P.forEach(p=>{const[x,y]=proj(p.lat,p.lng),d=Math.hypot(cx-x,cy-(y-20));if(d<bd){bd=d;best=p;}});
-  if(best&&bd<38)openSheet(best);
+  const v=VIEWS[key];
+  map.flyTo(v.center,v.zoom,{duration:.8,easeLinearity:.5});
 }
 
 function showTab(tab){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   document.getElementById('t-'+tab).classList.add('on');
   const isMap=tab==='map';
-  cv.style.display=isMap?'block':'none';
-  document.getElementById('mbtns').style.display=isMap?'flex':'none';
-  document.getElementById('hint').style.display=isMap?'':'none';
+  document.getElementById('map-wrap').style.display=isMap?'':'none';
   document.getElementById('lv').style.display=isMap?'none':'block';
-  if(isMap){render();}else{renderList(tab);flyTo(tab);}
+  if(isMap){
+    setTimeout(()=>map.invalidateSize(),50);
+  } else {
+    renderList(tab);
+    flyTo(tab);
+  }
 }
 
 function renderList(tab){
@@ -327,11 +263,7 @@ const shEl=document.getElementById('sh');
 shEl.addEventListener('touchstart',e=>{shY=e.touches[0].clientY;},{passive:true});
 shEl.addEventListener('touchmove',e=>{if(e.touches[0].clientY-shY>60)closeSheet();},{passive:true});
 
-// Hide hint after 4 sec
 setTimeout(()=>{const h=document.getElementById('hint');h.classList.add('gone');setTimeout(()=>h.style.display='none',1000);},4000);
-
-window.addEventListener('resize',resize);
-resize();
 </script>
 </body>
 </html>
