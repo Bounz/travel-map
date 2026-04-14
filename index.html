@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Самарканд & Бухара</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;height:100dvh;overflow:hidden;background:#0d1117;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+body{display:flex;flex-direction:column}
+.hdr{background:linear-gradient(135deg,#0d1b3e,#122150);padding:12px 16px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.hdr-t{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.hdr-s{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+.hdr-b{background:rgba(255,190,50,.12);border:1px solid rgba(255,190,50,.3);color:#ffbe32;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tabs{display:flex;background:#0d1b3e;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.tab{flex:1;padding:9px 6px;text-align:center;font-size:12px;font-weight:500;color:rgba(255,255,255,.4);cursor:pointer;border-bottom:2px solid transparent;user-select:none;transition:color .2s,border-color .2s}
+.tab.on{color:#ffbe32;border-bottom-color:#ffbe32}
+.tab i{display:block;font-size:18px;font-style:normal;margin-bottom:2px}
+#cv{display:block;flex:1;touch-action:none}
+#lv{flex:1;overflow-y:auto;display:none;background:#0d1117}
+.lsec{padding:14px 16px 4px}
+.ltitle{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px}
+.litem{background:#141b2d;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.litem:active{background:#1e2745}
+.licon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.lname{font-size:15px;font-weight:600}
+.ltype{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+.larr{color:rgba(255,255,255,.2);font-size:20px;margin-left:auto}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ov.on{opacity:1;pointer-events:all}
+.sh{position:fixed;bottom:0;left:0;right:0;background:#141b2d;border-radius:22px 22px 0 0;z-index:101;transform:translateY(100%);transition:transform .35s cubic-bezier(.32,.72,0,1);max-height:88dvh;overflow-y:auto}
+.sh.on{transform:translateY(0)}
+.sh-hdl{width:36px;height:4px;background:rgba(255,255,255,.18);border-radius:2px;margin:12px auto 0}
+.sh-hdr{padding:16px 20px 0}
+.sh-em{font-size:52px;text-align:center;display:block;margin-bottom:10px}
+.sh-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:8px;letter-spacing:.5px;text-transform:uppercase}
+.sh-name{font-size:22px;font-weight:800;line-height:1.2}
+.sh-type{font-size:14px;color:rgba(255,255,255,.45);margin-top:4px}
+.sh-body{padding:16px 20px 36px}
+.sh-desc{font-size:15px;line-height:1.65;color:rgba(255,255,255,.8)}
+.chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:7px}
+.chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:6px 12px;font-size:13px;color:rgba(255,255,255,.65)}
+.tip{margin-top:14px;background:rgba(255,190,50,.08);border-left:3px solid #ffbe32;border-radius:0 8px 8px 0;padding:10px 14px;font-size:13px;color:rgba(255,255,255,.72);line-height:1.55}
+.tip b{color:#ffbe32}
+#wrap{position:relative;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.mbtns{position:absolute;bottom:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:10}
+.mbtn{width:42px;height:42px;background:rgba(13,27,62,.92);border:1px solid rgba(255,255,255,.15);border-radius:11px;color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.mbtn:active{background:rgba(30,45,100,.9)}
+.hint{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.7);color:rgba(255,255,255,.65);font-size:12px;padding:7px 16px;border-radius:20px;pointer-events:none;white-space:nowrap;transition:opacity 1s;z-index:10}
+.hint.gone{opacity:0}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div><div class="hdr-t">🕌 Самарканд & Бухара</div><div class="hdr-s">Интерактивный путеводитель</div></div>
+  <div class="hdr-b">✈️ 2025</div>
+</div>
+<div class="tabs">
+  <div class="tab on" id="t-map" onclick="showTab('map')"><i>🗺</i>Карта</div>
+  <div class="tab" id="t-sam" onclick="showTab('sam')"><i>🏛</i>Самарканд</div>
+  <div class="tab" id="t-bux" onclick="showTab('bux')"><i>🕌</i>Бухара</div>
+</div>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+  <div id="lv"></div>
+  <div class="mbtns" id="mbtns">
+    <div class="mbtn" onclick="flyTo('sam')" title="Самарканд">🏛</div>
+    <div class="mbtn" onclick="flyTo('bux')" title="Бухара">🕌</div>
+    <div class="mbtn" onclick="flyTo('all')" title="Обзор">🌍</div>
+  </div>
+  <div class="hint" id="hint">Нажми на кружок города · Зум двумя пальцами</div>
+</div>
+<div class="ov" id="ov" onclick="closeSheet()"></div>
+<div class="sh" id="sh"><div class="sh-hdl"></div><div id="shc"></div></div>
+
+<script>
+const P=[
+  {id:'s1',city:'sam',name:'Площадь Регистан',type:'Архитектурный ансамбль',em:'🏛',lat:39.6547,lng:66.9758,col:'#c0392b',
+   desc:'Сердце Самарканда и жемчужина Средней Азии. Три медресе — Улугбека (XV в.), Шердор и Тилля-Кари (XVII в.) — образуют один из грандиознейших архитектурных ансамблей исламского мира.',
+   facts:['📅 XIV–XVII вв.','⏱ 2–3 часа','💰 Платный вход','📷 Фото разрешено'],
+   tip:'<b>Совет:</b> Приходи до 9:00 — меньше туристов и мягкий утренний свет. Вечером включается красивая подсветка.'},
+  {id:'s2',city:'sam',name:'Некрополь Шахи-Зинда',type:'Мавзолейный комплекс',em:'⚱️',lat:39.6680,lng:66.9752,col:'#8e44ad',
+   desc:'«Улица мёртвых» — вереница мавзолеев XI–XV веков с потрясающей бирюзовой плиткой. Здесь похоронены родственники Тамерлана. Название означает «живой царь».',
+   facts:['📅 XI–XV вв.','⏱ 1–2 часа','🧣 Дресс-код','💰 Платный вход'],
+   tip:'<b>Совет:</b> Надевай скромную одежду — действующее святое место. Плитка особенно красива в яркий полдень.'},
+  {id:'s3',city:'sam',name:'Мавзолей Гур-э-Амир',type:'Гробница Тамерлана',em:'👑',lat:39.6573,lng:66.9694,col:'#27ae60',
+   desc:'Гробница Тамерлана, его сыновей и внуков (в том числе Улугбека). Построен в 1404 году. Рубчатый купол в бирюзовых изразцах — символ Средней Азии.',
+   facts:['📅 1404 г.','⏱ 45–60 мин','💰 Платный вход','📐 Купол 12 м'],
+   tip:'<b>Легенда:</b> Советские учёные вскрыли гробницу в 1941 году, прочли проклятие — на следующий день началась операция «Барбаросса».'},
+  {id:'s4',city:'sam',name:'Мечеть Биби-Ханым',type:'Соборная мечеть Тамерлана',em:'🕌',lat:39.6610,lng:66.9745,col:'#2980b9',
+   desc:'Огромная мечеть 1404 года в честь любимой жены Тамерлана. Высота главного купола — 41 метр. Пострадала от землетрясений, восстановлена в XX веке.',
+   facts:['📅 1399–1404 гг.','⏱ 45 мин','💰 Платный вход','📐 Купол 41 м'],
+   tip:'<b>Рядом:</b> Через дорогу — базар Сиаб. Попробуй самаркандскую лепёшку прямо из тандыра.'},
+  {id:'s5',city:'sam',name:'Обсерватория Улугбека',type:'Средневековая обсерватория',em:'🔭',lat:39.6746,lng:66.8946,col:'#f39c12',
+   desc:'Построена в 1428–29 гг. внуком Тамерлана. Здесь создан звёздный каталог из 1018 звёзд. Сохранился гигантский квадрант диаметром 40 метров.',
+   facts:['📅 1428–1429 гг.','⏱ 1 час','🌍 ЮНЕСКО','🔭 Квадрант 40 м'],
+   tip:'<b>Совет:</b> Рядом есть небольшой музей с реконструкцией обсерватории и арабскими рукописями.'},
+  {id:'s6',city:'sam',name:'Базар Сиаб',type:'Колоритный восточный рынок',em:'🧆',lat:39.6616,lng:66.9770,col:'#e67e22',
+   desc:'Главный базар Самарканда у стен Биби-Ханым. Специи, сухофрукты, самаркандский хлеб, национальные сладости. Работает с раннего утра.',
+   facts:['⏰ С 7:00','💵 Торг уместен','🍞 Хлеб из тандыра','🌶 Специи & орехи'],
+   tip:'<b>Попробуй:</b> Самаркандский нон, халву, курагу и грецкие орехи. Цены лучше уточнять заранее.'},
+  {id:'s7',city:'sam',name:'Мавзолей Ходжа Дониёр',type:'Святое место',em:'✨',lat:39.6733,lng:66.9892,col:'#16a085',
+   desc:'Мавзолей библейского пророка Даниила. По легенде, Тамерлан привёз его останки из Сузы. Усыпальница необычно «растёт» — каждый год прибавляет несколько сантиметров.',
+   facts:['🧭 На берегу Сиаба','⏱ 30 мин','🆓 Вход свободный','📏 Длина 18 м'],
+   tip:'<b>Интересно:</b> Святое место трёх авраамических религий — приходят мусульмане, христиане и иудеи.'},
+  {id:'b1',city:'bux',name:'Арк — крепость-цитадель',type:'Древняя крепость',em:'🏰',lat:39.7760,lng:64.4155,col:'#c0392b',
+   desc:'Гигантская цитадель в центре Бухары — сердце города на протяжении 2500 лет. Здесь жили бухарские эмиры вплоть до 1920 года. Стены высотой 20 метров.',
+   facts:['📅 I–XX вв.','⏱ 1.5–2 часа','💰 Платный вход','📐 Стены 20 м'],
+   tip:'<b>История:</b> В 1842 году здесь казнили британского разведчика Артура Конноли. Рядом — зиндан с пауками.'},
+  {id:'b2',city:'bux',name:'Минарет Калян',type:'Минарет XII века',em:'🗼',lat:39.7740,lng:64.4175,col:'#8e44ad',
+   desc:'Минарет высотой 47 метров (1127 г.). Один из немногих монументов, которые Чингисхан приказал не разрушать. В средние века служил маяком для торговых каравинов.',
+   facts:['📅 1127 г.','⏱ 30 мин','📐 Высота 47 м','🛡 Пощажён Чингисханом'],
+   tip:'<b>Вечером</b> красивая подсветка. Мечеть Калян и медресе Мир-Араб рядом — ансамбль Пой-Калян.'},
+  {id:'b3',city:'bux',name:'Ляби-Хауз',type:'Площадь с прудом XVII в.',em:'💧',lat:39.7720,lng:64.4197,col:'#2980b9',
+   desc:'Центральная площадь с прудом 1620 года. Название — «над прудом». Сейчас главное место отдыха Бухары. Рядом бронзовый Ходжа Насреддин на осле.',
+   facts:['📅 1620 г.','⏱ 1 час','🍽 Рестораны рядом','🌳 Старые чинары'],
+   tip:'<b>Вечер</b> здесь особенно хорош — огни в воде, местные играют нарды, работают торговцы.'},
+  {id:'b4',city:'bux',name:'Чор-Минор',type:'Ворота с четырьмя минаретами',em:'🕍',lat:39.7758,lng:64.4259,col:'#27ae60',
+   desc:'Ворота медресе с четырьмя минаретами (1807 г.) — один из самых фотографируемых объектов Бухары. Построен богатым туркменским торговцем.',
+   facts:['📅 1807 г.','⏱ 20–30 мин','📸 Культовое фото','🟦 4 голубых купола'],
+   tip:'<b>Как найти:</b> Спрячется в переулках старого города. Ищи по навигатору или спроси «Чор-Минор?»'},
+  {id:'b5',city:'bux',name:'Мавзолей Саманидов',type:'Мавзолей X века',em:'⬛',lat:39.7778,lng:64.4142,col:'#f39c12',
+   desc:'Жемчужина раннесредневековой архитектуры (~905 г.). Один из старейших исламских мавзолеев. Пережил монгольское нашествие — был засыпан песком.',
+   facts:['📅 ~905 г.','⏱ 30 мин','🌍 ЮНЕСКО','🧱 Уникальная кладка'],
+   tip:'<b>Оптика:</b> Кладка выглядит по-разному утром, днём и вечером — зайди в разное время суток.'},
+  {id:'b6',city:'bux',name:'Мечеть Боло-Хауз',type:'Деревянная мечеть XVIII в.',em:'🌿',lat:39.7766,lng:64.4145,col:'#16a085',
+   desc:'Изящная мечеть 1712 года с уникальным деревянным айваном на 20 резных колоннах. Одна из красивейших деревянных построек Средней Азии.',
+   facts:['📅 1712 г.','⏱ 20–30 мин','🪵 20 колонн','💧 Пруд у входа'],
+   tip:'<b>Фото:</b> Отражение 20 деревянных колонн в пруду — одна из красивейших точек Бухары.'},
+  {id:'b7',city:'bux',name:'Торговые купола',type:'Крытые базары XVI в.',em:'🛒',lat:39.7735,lng:64.4180,col:'#e67e22',
+   desc:'Три крытых торговых купола XVI века: ювелиры, менялы, шапочники. Работают до сих пор — сувениры, ткани, украшения.',
+   facts:['📅 XVI в.','⏱ 1 час','🛍 Сувениры','🧵 Шёлк & ювелирка'],
+   tip:'<b>Купи:</b> Местный шёлк, вышивку (сюзане), керамику. Торговаться нормально — снижай на 20–30%.'}
+];
+
+const ROUTE=[[39.6547,66.9758],[39.6610,66.9745],[39.6680,66.9752],[39.6573,66.9694],[39.7778,64.4142],[39.7760,64.4155],[39.7740,64.4175],[39.7720,64.4197]];
+const VIEWS={all:{lat:39.716,lng:65.72,scale:115},sam:{lat:39.663,lng:66.945,scale:3000},bux:{lat:39.7745,lng:64.421,scale:6500}};
+const LAT_R=1.300;
+
+const cv=document.getElementById('cv');
+const ctx=cv.getContext('2d');
+const wrap=document.getElementById('wrap');
+let W,H,dpr=window.devicePixelRatio||1;
+let vs={lat:39.716,lng:65.72,scale:115};
+let tv={...vs};
+let drag=false,lx=0,ly=0,pd0=0,ps0=1,animId=null;
+
+function resize(){
+  const r=wrap.getBoundingClientRect();
+  W=r.width;H=r.height;
+  cv.width=W*dpr;cv.height=H*dpr;
+  cv.style.width=W+'px';cv.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  render();
+}
+
+function proj(lat,lng){
+  return[W/2+(lng-vs.lng)*vs.scale, H/2-(lat-vs.lat)*vs.scale*LAT_R];
+}
+
+function render(){
+  ctx.clearRect(0,0,W,H);
+  // Background
+  const bg=ctx.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,'#0a1628');bg.addColorStop(1,'#0d1f3c');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)';ctx.lineWidth=1;
+  const step=vs.scale>=2000?0.005:vs.scale>=500?0.02:0.5;
+  const w2=W/2/vs.scale,h2=H/2/(vs.scale*LAT_R);
+  for(let g=Math.floor((vs.lng-w2-step)/step)*step;g<=vs.lng+w2+step;g+=step){
+    const x=W/2+(g-vs.lng)*vs.scale;
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();
+  }
+  for(let g=Math.floor((vs.lat-h2-step)/step)*step;g<=vs.lat+h2+step;g+=step){
+    const y=H/2-(g-vs.lat)*vs.scale*LAT_R;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+  }
+  // Route
+  ctx.save();ctx.strokeStyle='rgba(255,190,50,.65)';ctx.lineWidth=2;ctx.setLineDash([8,8]);ctx.lineJoin='round';
+  ctx.beginPath();
+  ROUTE.forEach(([la,ln],i)=>{const[x,y]=proj(la,ln);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();ctx.restore();
+  const detail=vs.scale>=800;
+  if(!detail){
+    [{label:'Самарканд',lat:39.662,lng:66.945,col:'#e77'},{label:'Бухара',lat:39.7745,lng:64.421,col:'#79e'}].forEach(c=>{
+      const[x,y]=proj(c.lat,c.lng);
+      ctx.save();ctx.shadowColor=c.col;ctx.shadowBlur=22;
+      ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);
+      ctx.fillStyle=c.col+'44';ctx.fill();
+      ctx.strokeStyle=c.col;ctx.lineWidth=2;ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle='#fff';ctx.font='bold 15px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('7',x,y);
+      ctx.fillStyle='rgba(255,255,255,.75)';ctx.font='bold 12px -apple-system,sans-serif';ctx.fillText(c.label,x,y+40);
+    });
+  } else {
+    P.forEach(p=>{
+      const[x,y]=proj(p.lat,p.lng);
+      if(x<-40||x>W+40||y<-40||y>H+40) return;
+      const r=20;
+      ctx.save();ctx.shadowColor=p.col;ctx.shadowBlur=14;
+      ctx.beginPath();ctx.arc(x,y-r,r,0,Math.PI*2);
+      ctx.fillStyle=p.col+'cc';ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x-7,y-r*.5);ctx.lineTo(x+7,y-r*.5);ctx.lineTo(x,y+5);ctx.closePath();
+      ctx.fillStyle=p.col+'cc';ctx.fill();
+      ctx.restore();
+      ctx.font=r+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.em,x,y-r);
+      if(vs.scale>=2500){
+        ctx.font='bold 11px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+        const tw=ctx.measureText(p.name).width;
+        ctx.fillStyle='rgba(0,0,0,.65)';ctx.fillRect(x-tw/2-4,y+8,tw+8,17);
+        ctx.fillStyle='#fff';ctx.fillText(p.name,x,y+10);
+      }
+    });
+  }
+  // City labels
+  [{label:'САМАРКАНД',lat:39.662,lng:66.945},{label:'БУХАРА',lat:39.7745,lng:64.421}].forEach(c=>{
+    const[x,y]=proj(c.lat,c.lng);
+    if(x<-120||x>W+120) return;
+    ctx.font='bold 10px -apple-system,sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';
+    ctx.fillStyle='rgba(255,190,50,.45)';ctx.fillText('✈ '+c.label,x,y-(detail?260:56));
+  });
+}
+
+function flyTo(key){
+  const v=VIEWS[key];tv={lat:v.lat,lng:v.lng,scale:v.scale};
+  if(!animId)animId=requestAnimationFrame(anim);
+}
+
+function anim(){
+  let mv=false;
+  ['lat','lng','scale'].forEach(k=>{const d=tv[k]-vs[k];if(Math.abs(d)>.00001){vs[k]+=d*.13;mv=true;}else vs[k]=tv[k];});
+  render();
+  animId=mv?requestAnimationFrame(anim):null;
+}
+
+// Touch
+function dist2(t){return Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY)}
+
+cv.addEventListener('touchstart',e=>{
+  e.preventDefault();
+  const t=e.touches;
+  if(t.length===1){drag=true;lx=t[0].clientX;ly=t[0].clientY;}
+  else if(t.length===2){drag=false;pd0=dist2(t);ps0=vs.scale;}
+},{passive:false});
+
+cv.addEventListener('touchmove',e=>{
+  e.preventDefault();
+  const t=e.touches;
+  if(t.length===1&&drag){
+    vs.lng-=(t[0].clientX-lx)/vs.scale;vs.lat+=(t[0].clientY-ly)/(vs.scale*LAT_R);
+    tv={...vs};lx=t[0].clientX;ly=t[0].clientY;render();
+  } else if(t.length===2){
+    const ns=ps0*(dist2(t)/pd0);vs.scale=Math.max(80,Math.min(22000,ns));tv={...vs};render();
+  }
+},{passive:false});
+
+cv.addEventListener('touchend',e=>{
+  if(drag&&e.changedTouches.length===1){
+    const dx=e.changedTouches[0].clientX-lx,dy=e.changedTouches[0].clientY-ly;
+    if(Math.abs(dx)<8&&Math.abs(dy)<8) tap(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
+  }
+  drag=false;
+},{passive:true});
+
+cv.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+cv.addEventListener('mousemove',e=>{if(!drag)return;vs.lng-=(e.clientX-lx)/vs.scale;vs.lat+=(e.clientY-ly)/(vs.scale*LAT_R);tv={...vs};lx=e.clientX;ly=e.clientY;render();});
+cv.addEventListener('mouseup',e=>{if(Math.abs(e.clientX-lx)<5&&Math.abs(e.clientY-ly)<5)tap(e.clientX,e.clientY);drag=false;});
+cv.addEventListener('wheel',e=>{e.preventDefault();vs.scale=Math.max(80,Math.min(22000,vs.scale*(e.deltaY>0?.85:1.15)));tv={...vs};render();},{passive:false});
+
+function tap(cx,cy){
+  if(vs.scale<800){
+    const sp=proj(39.662,66.945),bp=proj(39.7745,64.421);
+    if(Math.hypot(cx-sp[0],cy-sp[1])<42){flyTo('sam');return;}
+    if(Math.hypot(cx-bp[0],cy-bp[1])<42){flyTo('bux');return;}
+    return;
+  }
+  let best=null,bd=Infinity;
+  P.forEach(p=>{const[x,y]=proj(p.lat,p.lng),d=Math.hypot(cx-x,cy-(y-20));if(d<bd){bd=d;best=p;}});
+  if(best&&bd<38)openSheet(best);
+}
+
+function showTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('t-'+tab).classList.add('on');
+  const isMap=tab==='map';
+  cv.style.display=isMap?'block':'none';
+  document.getElementById('mbtns').style.display=isMap?'flex':'none';
+  document.getElementById('hint').style.display=isMap?'':'none';
+  document.getElementById('lv').style.display=isMap?'none':'block';
+  if(isMap){render();}else{renderList(tab);flyTo(tab);}
+}
+
+function renderList(tab){
+  const items=P.filter(p=>p.city===tab);
+  const city=tab==='sam'?'Самарканд':'Бухара';
+  let h=`<div class="lsec"><div class="ltitle">${city} · ${items.length} мест</div>`;
+  items.forEach(p=>{
+    h+=`<div class="litem" onclick='openSheet(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+      <div class="licon" style="background:${p.col}22">${p.em}</div>
+      <div style="flex:1;min-width:0"><div class="lname">${p.name}</div><div class="ltype">${p.type}</div></div>
+      <div class="larr">›</div></div>`;
+  });
+  document.getElementById('lv').innerHTML=h+'</div>';
+}
+
+function openSheet(p){
+  const badge=`<span class="sh-badge" style="background:${p.col}22;color:${p.col};border:1px solid ${p.col}55">${p.city==='sam'?'Самарканд':'Бухара'}</span>`;
+  const chips=p.facts.map(f=>`<div class="chip">${f}</div>`).join('');
+  document.getElementById('shc').innerHTML=`
+    <div class="sh-hdr"><span class="sh-em">${p.em}</span>${badge}
+      <div class="sh-name">${p.name}</div><div class="sh-type">${p.type}</div></div>
+    <div class="sh-body"><div class="sh-desc">${p.desc}</div>
+      <div class="chips">${chips}</div>${p.tip?`<div class="tip">${p.tip}</div>`:''}</div>`;
+  document.getElementById('ov').classList.add('on');
+  document.getElementById('sh').classList.add('on');
+}
+
+function closeSheet(){
+  document.getElementById('ov').classList.remove('on');
+  document.getElementById('sh').classList.remove('on');
+}
+
+let shY=0;
+const shEl=document.getElementById('sh');
+shEl.addEventListener('touchstart',e=>{shY=e.touches[0].clientY;},{passive:true});
+shEl.addEventListener('touchmove',e=>{if(e.touches[0].clientY-shY>60)closeSheet();},{passive:true});
+
+// Hide hint after 4 sec
+setTimeout(()=>{const h=document.getElementById('hint');h.classList.add('gone');setTimeout(()=>h.style.display='none',1000);},4000);
+
+window.addEventListener('resize',resize);
+resize();
+</script>
+</body>
+</html>
